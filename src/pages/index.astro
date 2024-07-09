@@ -1,0 +1,53 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+
+const posts = (await getCollection('experience')).sort(
+	(a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>{SITE_TITLE}</h1>
+			<p>
+				I'm a self taught software engineer focused on Front-end. My main interests are web accessibility and user experience.
+			</p>
+			<section>
+				<h2>Experience</h2>
+					{
+						posts.map((job) => (
+							<article>
+								
+									<h3 class="title">{job.data.title}</h3>
+									<ul>
+										<li>{job.data.company}</li>
+										<li>{job.data.location}</li>
+										<li>
+											<span><FormattedDate date={job.data.startDate}/></span> - 
+											{
+												job.data.endDate
+												? (<span>- <FormattedDate date={job.data.endDate}/></span>)
+												: <span>Present</span>
+											}
+										</li>
+									</ul>
+									<a href={`/experience/${job.slug}/`}>Ver más</a>
+							</article>
+						))
+					}
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>

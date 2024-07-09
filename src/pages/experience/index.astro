@@ -1,0 +1,46 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { getCollection } from 'astro:content';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+const posts = (await getCollection('experience')).sort(
+	(a, b) => b.data.startDate.valueOf() - a.data.startDate.valueOf()
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<section>
+				<ul>
+					{
+						posts.map((job) => (
+							<li>
+								
+									<h4 class="title">{job.data.title}</h4>
+									<p>
+										<span><FormattedDate date={job.data.startDate}/></span> - 
+										{
+											job.data.endDate
+											? (<span>- <FormattedDate date={job.data.endDate}/></span>)
+											: <span>Present</span>
+										}
+									</p>
+									<a href={`/experience/${job.slug}/`}>Más info</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		</main>
+		<Footer />
+	</body>
+</html>
